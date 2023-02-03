@@ -40,7 +40,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
     private IClickListener mIClickListener;
     private DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child("cards").child(onlineUserID);
-    private int numOfCards = 0;
 
     public interface IClickListener {
         void onClickUpdateItem(Category category);
@@ -48,9 +47,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         void onClickDeleteItem(Category category);
 
         void onClickItemCategory(DatabaseReference categoryRef);
-
-        void onClickStartReview(Category category);
-        void onClickStartPractice(Category category);
     }
 
     public CategoryAdapter(List<Category> mListCategories, IClickListener iClickListener) {
@@ -71,12 +67,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         Category category = mListCategories.get(position);
         if (category == null) return;
-
         viewBinderHelper.bind(holder.swipeRevealLayout, category.getId());
         holder.tvTimeStamp.setText(category.getTimeStamp());
         holder.tvCateName.setText(category.getName());
         holder.tvDescription.setText(category.getDescription());
-        setNumOfCards_Category(category, holder.tvNumOfCards, holder.btnReview_Add, holder.btnPractice); // must call before set practice/review button
+        setNumOfSets(category, holder.tvNumOfCards, holder.btnReview_Add, holder.btnPractice); // must call before set practice/review button
         try {
             long days = countDays(category.getTimeStamp());
             holder.tvDayCount.setText(days < 1 ? "recently" : days + " days ago");
@@ -86,19 +81,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         // actions listener
         holder.btnEdit.setOnClickListener(view -> mIClickListener.onClickUpdateItem(category));
         holder.btnRemove.setOnClickListener(view -> mIClickListener.onClickDeleteItem(category));
-        holder.btnAddCard.setOnClickListener(view -> mIClickListener.onClickItemCategory(mUserReference.child(category.getId())));
-        holder.btnReview_Add.setOnClickListener(view -> {
-            if (holder.btnReview_Add.getText() == "ADD CARDS") {
-                mIClickListener.onClickItemCategory(mUserReference.child(category.getId()));
-            } else {
-                mIClickListener.onClickStartReview(category);
-            }
+
+        holder.tvCateName.setOnClickListener(view -> {
+            mIClickListener.onClickItemCategory(mUserReference.child(category.getId()));
         });
-        holder.btnPractice.setOnClickListener(view -> mIClickListener.onClickStartPractice(category));
-        holder.tvCateName.setOnClickListener(view -> mIClickListener.onClickItemCategory(mUserReference.child(category.getId())));
         //layout click
         holder.tvNumOfCards.setOnClickListener(view -> mIClickListener.onClickItemCategory(mUserReference.child(category.getId())));
-        holder.loButtons.setOnClickListener(view -> mIClickListener.onClickItemCategory(mUserReference.child(category.getId())));
         holder.tvDescription.setOnClickListener(view -> mIClickListener.onClickItemCategory(mUserReference.child(category.getId())));
     }
 
@@ -129,10 +117,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             btnEdit = itemView.findViewById(R.id.btn_edit_category_item);
             btnRemove = itemView.findViewById(R.id.btn_remove_category_item);
             btnAddCard = itemView.findViewById(R.id.btn_add_card_category_item);
-            btnReview_Add = itemView.findViewById(R.id.btn_review_or_add_category_item);
-            btnPractice = itemView.findViewById(R.id.btn_practice_category_item);
             //layout
-            loButtons = itemView.findViewById((R.id.layout_buttons));
         }
     }
 
@@ -143,15 +128,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Date firstDate = sdf.parse(fromDate);
         Date secondDate = sdf.parse(new SimpleDateFormat("dd-MM-yyy HH:mm:ss").format(new Date()));
 
-        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
-        long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        long diffInMilliSeconds = Math.abs(secondDate.getTime() - firstDate.getTime());
+        long diff = TimeUnit.DAYS.convert(diffInMilliSeconds, TimeUnit.MILLISECONDS);
 
         return diff;
     }
 
-    private void setNumOfCards_Category(Category category, TextView textView, Button btnReview, Button btnPractice) {
-        DatabaseReference cardRef = mUserReference.child(category.getId()).child("flashCards");
-        cardRef.addValueEventListener(new ValueEventListener() {
+    private void setNumOfSets(Category category, TextView textView, Button btnReview, Button btnPractice) {
+        DatabaseReference setsRef = mUserReference.child(category.getId()).child("sets");
+        setsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int count = 0;
@@ -159,20 +144,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                     count++;
                 }
                 if (count < 2) {
-                    textView.setText(count + " card");
+                    textView.setText(count + " set");
                 } else {
-                    textView.setText(count + " cards");
+                    textView.setText(count + " sets");
                 }
-                if (count < 5) {
-                    btnPractice.setVisibility(View.INVISIBLE);
-                    btnReview.setText("ADD CARDS");
-                } else {
-                    btnPractice.setVisibility(View.VISIBLE);
-                    btnReview.setText("REVIEW");
-                }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 textView.setText("error");

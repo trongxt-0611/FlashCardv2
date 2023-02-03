@@ -53,7 +53,7 @@ import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 public class QuizActivity extends AppCompatActivity {
     private TextView btnOption1, btnOption2, btnOption3, btnOption4, tvPronunciation, tvExamples;
     private TextView tvQuesIndex, tvQuestion;
-    private DatabaseReference allCardsRef;
+    private DatabaseReference flashCardRoot;
 
     private ArrayList<Card> mListCards;
     private ArrayList<Question> mListQuestions;
@@ -103,7 +103,7 @@ public class QuizActivity extends AppCompatActivity {
         boolean shuffle = intent.getBooleanExtra("IS_SHUFFLE", false);
         isReversed = reverse;
         isShuffleQues = shuffle;
-        allCardsRef = MainActivity.reference.child(categoryId).child("flashCards");
+        flashCardRoot = MainActivity.reference.child(categoryId).child("flashCards");
 
     }
 
@@ -256,7 +256,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void getAllCards() {
-        allCardsRef.addValueEventListener(new ValueEventListener() {
+        flashCardRoot.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

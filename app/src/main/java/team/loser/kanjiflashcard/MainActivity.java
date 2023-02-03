@@ -20,6 +20,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,7 @@ import team.loser.kanjiflashcard.fragments.CardsFragment;
 import team.loser.kanjiflashcard.fragments.ChangePasswordFragment;
 import team.loser.kanjiflashcard.fragments.HomeFragment;
 import team.loser.kanjiflashcard.fragments.ProfileFragment;
+import team.loser.kanjiflashcard.fragments.SetsFragment;
 import team.loser.kanjiflashcard.utils.IOnBackPressed;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int FRAGMENT_CARDS = 5;
     private static final int FRAGMENT_SHARE = 6;
 
+    private static final int FRAGMENT_SETS = 7;
     private FragmentTransaction fragmentTransaction;
     final private ProfileFragment mProfileFragment = new ProfileFragment();
     private NavigationView mNavigationView;
@@ -96,6 +100,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.content_frame, new HomeFragment());
+        fragmentTransaction.commit();
+        mCurrentFragment = FRAGMENT_HOME;
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
@@ -110,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(this);
-
-
 
         showUserInfoInMenuLeft();
     }
@@ -131,15 +138,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
         mNavigationView.getMenu().findItem(R.id.nav_home).setChecked(true);
         mCurrentFragment = FRAGMENT_HOME;
-    }
-    // go to Cards Fragment
-    public void goToCardsFragment(DatabaseReference categoryRef){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        CardsFragment cardsFragment = new CardsFragment(categoryRef);
-        fragmentTransaction.replace(R.id.content_frame, cardsFragment);
-        fragmentTransaction.addToBackStack(cardsFragment.CARDS_FRAGMENT_NAME);
-        fragmentTransaction.commit();
-
     }
     public void showUserInfoInMenuLeft(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -165,9 +163,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if(id == R.id.nav_home){
             if(mCurrentFragment != FRAGMENT_HOME){
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.content_frame, new HomeFragment());
-                fragmentTransaction.commit();
+                HomeFragment homeFragment = new HomeFragment();
+                replaceFragment(homeFragment, homeFragment.HOME_FRAGMENT_NAME);
                 mCurrentFragment = FRAGMENT_HOME;
             }
         }
@@ -244,8 +241,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.addToBackStack(fragmentName);
         fragmentTransaction.commit();
     }
-
-
+    public void goToCardsFragment(DatabaseReference setsRef){
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            CardsFragment cardsFragment = new CardsFragment(setsRef);
+            fragmentTransaction.replace(R.id.content_frame, cardsFragment);
+            fragmentTransaction.addToBackStack(cardsFragment.CARDS_FRAGMENT_NAME);
+            fragmentTransaction.commit();
+            mCurrentFragment = FRAGMENT_CARDS;
+    }
+    public void goToSetsFragment(DatabaseReference cateRef){
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            SetsFragment setsFragment = new SetsFragment(cateRef);
+            fragmentTransaction.replace(R.id.content_frame, setsFragment);
+            fragmentTransaction.addToBackStack(setsFragment.SETS_FRAGMENT_NAME);
+            fragmentTransaction.commit();
+            mCurrentFragment = FRAGMENT_SETS;
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -266,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        mCurrentFragment = FRAGMENT_CARDS;
+        mCurrentFragment = FRAGMENT_SETS;
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (!(fragment instanceof IOnBackPressed) || !((IOnBackPressed) fragment).onBackPressed()) {
             super.onBackPressed();

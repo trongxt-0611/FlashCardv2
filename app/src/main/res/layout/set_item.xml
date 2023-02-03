@@ -53,7 +53,7 @@
                 android:orientation="horizontal"
                 android:gravity="center">
                 <ImageButton
-                    android:id="@+id/btn_add_card_category_item"
+                    android:id="@+id/btn_add_card_set_item"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
@@ -63,7 +63,7 @@
                     android:layout_marginRight="10dp"/>
 
                 <ImageButton
-                    android:id="@+id/btn_edit_category_item"
+                    android:id="@+id/btn_edit_set_item"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
@@ -74,7 +74,7 @@
                     android:layout_marginRight="10dp"/>
 
                 <ImageButton
-                    android:id="@+id/btn_remove_category_item"
+                    android:id="@+id/btn_remove_set_item"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
@@ -103,7 +103,7 @@
                     android:orientation="vertical"
                     android:layout_marginLeft="15dp">
                     <TextView
-                        android:id="@+id/tv_category_name"
+                        android:id="@+id/tv_set_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
@@ -139,7 +139,7 @@
                         android:textColor="@color/onSurface"
                         android:textSize="12dp" />
 
-<!--                    <LinearLayout
+                    <LinearLayout
                         android:id="@+id/layout_buttons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                         android:weightSum="5">
 
                         <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_review_or_add_category_item"
+                            android:id="@+id/btn_review_or_add_set_item"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -161,7 +161,7 @@
                             android:layout_marginLeft="5dp"/>
 
                         <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_practice_category_item"
+                            android:id="@+id/btn_practice_set_item"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
@@ -170,7 +170,7 @@
                             android:text="PRACTICE"
                             android:textColor="@color/primary"
                             android:textSize="18dp" />
-                    </LinearLayout>-->
+                    </LinearLayout>
 
 
                 </LinearLayout>

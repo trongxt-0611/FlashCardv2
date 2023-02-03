@@ -50,7 +50,7 @@ import team.loser.kanjiflashcard.models.Card;
 public class CardsFragment extends Fragment {
     public static final String CARDS_FRAGMENT_NAME = CardsFragment.class.getName();
     private View mView;
-    private DatabaseReference flashcardsReference, categoryReference;
+    private DatabaseReference flashcardsReference, setsReference;
 
     private RecyclerView rcvCards;
     private CardAdapter mCardAdapter;
@@ -61,20 +61,19 @@ public class CardsFragment extends Fragment {
     private TextView tvNumOfCard;
     private TextToSpeech mTTSJapanese;
 
-    public static CardsFragment newInstance(DatabaseReference reference) {
-        CardsFragment fragment = new CardsFragment(reference);
+    public static CardsFragment newInstance(DatabaseReference setsRef) {
+        CardsFragment fragment = new CardsFragment(setsRef);
         return fragment;
     }
 
-    public CardsFragment(DatabaseReference reference) {
+    public CardsFragment(DatabaseReference setsReference) {
         // Required empty public constructor
-        this.categoryReference = reference;
+        this.setsReference = setsReference;
         //TODO: set data
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
 
@@ -88,9 +87,16 @@ public class CardsFragment extends Fragment {
         getListCategoriesFromRealtimeDataBase();
         return mView;
     }
-
+    private void setEvents() {
+        btnAddCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewCard();
+            }
+        });
+    }
     private void setControls() {
-        flashcardsReference = categoryReference.child("flashCards");
+        flashcardsReference = setsReference.child("flashCards");
         btnAddCard = mView.findViewById(R.id.btn_add_card_cards_fragment);
         loader = new ProgressDialog(getContext());
         rcvCards = mView.findViewById(R.id.rcv_list_cards_cards_fragment);
@@ -141,14 +147,6 @@ public class CardsFragment extends Fragment {
         super.onDestroy();
     }
 
-    private void setEvents() {
-        btnAddCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewCard();
-            }
-        });
-    }
     private void getNumberOfCards() {
         flashcardsReference.addValueEventListener(new ValueEventListener() {
             @Override
