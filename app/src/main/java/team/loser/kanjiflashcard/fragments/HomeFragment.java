@@ -102,7 +102,7 @@ public class HomeFragment extends Fragment implements IOnBackPressed {
                     tvNumOfCategory.setText("Add some categories to start learning");
                 }
                 else{
-                    tvNumOfCategory.setText("ALL: "+ count);
+                    tvNumOfCategory.setText("ALL CATEGORIES: "+ count);
                 }
             }
 

@@ -18,7 +18,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/onBackground"
-                    android:text="ALL: "
+                    android:text="ALL SETS: "
                     android:textStyle="bold"
                     android:textSize="18sp"/>
                 <LinearLayout

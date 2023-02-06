@@ -116,7 +116,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             swipeRevealLayout = itemView.findViewById(R.id.swipe_layout);
             btnEdit = itemView.findViewById(R.id.btn_edit_category_item);
             btnRemove = itemView.findViewById(R.id.btn_remove_category_item);
-            btnAddCard = itemView.findViewById(R.id.btn_add_card_category_item);
             //layout
         }
     }

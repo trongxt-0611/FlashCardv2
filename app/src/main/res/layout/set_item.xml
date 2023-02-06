@@ -4,177 +4,182 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:elevation="100dp"
     android:background="@drawable/rounded_corner_left"
     android:layout_marginLeft="5sp"
     >
-    <com.chauthai.swipereveallayout.SwipeRevealLayout
-        android:id="@+id/swipe_layout"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dragEdge="right"
-        app:mode="same_level"
+        app:cardElevation="2dp"
         android:layout_marginLeft="10sp"
-        android:background="@color/surface">
-        <!--right side-->
-        <LinearLayout
-            android:id="@+id/layout_options"
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+        android:background="@color/surface"
+        app:cardCornerRadius="0dp">
+        <com.chauthai.swipereveallayout.SwipeRevealLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dragEdge="right"
+            app:mode="same_level">
+            <!--right side-->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/tv_day_count"
+                android:id="@+id/layout_options"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="left"
-                    android:text="5" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center">
 
-                <TextView
-                    android:id="@+id/tv_timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_gravity="right"
-                    android:text="Nov 1, 2021"/>
+                    <TextView
+                        android:id="@+id/tv_day_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="left"
+                        android:text="5" />
+
+                    <TextView
+                        android:id="@+id/tv_timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_gravity="right"
+                        android:text="Nov 1, 2021"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/btn_add_card_set_item"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/set_add"
+                        android:layout_marginRight="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_edit_set_item"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/set_edit"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_remove_set_item"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/set_remove"
+                        android:layout_marginLeft="10dp"/>
+                </LinearLayout>
             </LinearLayout>
+            <!--left side-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageButton
-                    android:id="@+id/btn_add_card_set_item"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/add_cate"
-                    android:layout_marginRight="10dp"/>
-
-                <ImageButton
-                    android:id="@+id/btn_edit_set_item"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/edit_cate"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
-
-                <ImageButton
-                    android:id="@+id/btn_remove_set_item"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/remove_cate"
-                    android:layout_marginLeft="10dp"/>
-            </LinearLayout>
-        </LinearLayout>
-        <!--left side-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/layout_cate_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="15dp">
-                    <TextView
-                        android:id="@+id/tv_set_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:layout_marginTop="10dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category name"
-                        android:textColor="@color/onSurface"
-                        android:textSize="24dp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/tv_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Description here"
-                        android:textColor="@color/onSurface"
-                        android:textSize="15dp"
-                        android:layout_marginLeft="10dp"/>
-                    <TextView
-                        android:id="@+id/tv_cards_or_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:text="0"
-                        android:textColor="@color/onSurface"
-                        android:textSize="12dp" />
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/layout_buttons"
+                        android:id="@+id/layout_cate_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingTop="10dp"
-                        android:paddingLeft="5dp"
-                        android:paddingBottom="10dp"
-                        android:weightSum="5">
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_review_or_add_set_item"
-                            android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="15dp">
+                        <TextView
+                            android:id="@+id/tv_set_name"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/button_rounded_transparent"
-                            android:text="REVIEW"
-                            android:textColor="@color/primary"
-                            android:textSize="18dp"
-                            android:layout_marginLeft="5dp"/>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_practice_set_item"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/button_rounded_transparent"
-                            android:text="PRACTICE"
-                            android:textColor="@color/primary"
-                            android:textSize="18dp" />
+                            android:gravity="left"
+                            android:layout_marginTop="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:text="Category name"
+                            android:textColor="@color/onSurface"
+                            android:textSize="24dp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="5dp">
 
+                        <TextView
+                            android:id="@+id/tv_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Description here"
+                            android:textColor="@color/onSurface"
+                            android:textSize="15dp"
+                            android:layout_marginLeft="10dp"/>
+                        <TextView
+                            android:id="@+id/tv_cards_or_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="0"
+                            android:textColor="@color/onSurface"
+                            android:textSize="12dp" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_buttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="10dp"
+                            android:paddingLeft="5dp"
+                            android:paddingBottom="10dp"
+                            android:weightSum="5">
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_review_or_add_set_item"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_rounded_transparent"
+                                android:text="REVIEW"
+                                android:textColor="@color/primary"
+                                android:textSize="18dp"
+                                android:layout_marginLeft="5dp"/>
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_practice_set_item"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_rounded_transparent"
+                                android:text="PRACTICE"
+                                android:textColor="@color/primary"
+                                android:textSize="18dp" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </com.chauthai.swipereveallayout.SwipeRevealLayout>
+        </com.chauthai.swipereveallayout.SwipeRevealLayout>
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

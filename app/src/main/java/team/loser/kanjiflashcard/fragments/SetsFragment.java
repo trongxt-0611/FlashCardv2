@@ -180,10 +180,10 @@ public class SetsFragment extends Fragment {
                     count++;
                 }
                 if (count == 0) {
-                    tvNumOfSets.setText("Add some sets to start learning");
+                    tvNumOfSets.setText("Add some sets to start learning!");
                 }
                 else{
-                    tvNumOfSets.setText("ALL: "+ count);
+                    tvNumOfSets.setText("ALL SETS: "+ count);
                 }
             }
 
