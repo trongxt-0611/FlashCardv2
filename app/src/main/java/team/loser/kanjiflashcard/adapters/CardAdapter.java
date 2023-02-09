@@ -52,8 +52,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
         holder.tvTerm.setText(card.getTerm());
         holder.tvDefinition.setText(card.getDefinition());
-        holder.tvHowToRead.setText(card.getHowtoread());
-        holder.tvExamples.setText(card.getExamples());
+/*        holder.tvHowToRead.setText(card.getHowtoread());
+        holder.tvExamples.setText(card.getExamples());*/
         holder.btnEdit.setOnClickListener(view -> mIClickListener.onClickEditCard(card));
         holder.btnRemove.setOnClickListener(view -> mIClickListener.onClickRemoveCard(card));
         holder.btnTextToSpeech.setOnClickListener(view -> mIClickListener.onClickToSpeech(card));
@@ -77,8 +77,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             super(itemView);
             tvTerm = itemView.findViewById(R.id.tv_term_card_item);
             tvDefinition = itemView.findViewById(R.id.tv_definition_card_item);
-            tvHowToRead = itemView.findViewById(R.id.tv_how_to_read_card_item);
-            tvExamples = itemView.findViewById(R.id.tv_examples_card_item);
+/*            tvHowToRead = itemView.findViewById(R.id.tv_how_to_read_card_item);
+            tvExamples = itemView.findViewById(R.id.tv_examples_card_item);*/
             frontCard = itemView.findViewById(R.id.front_card);
             backCard = itemView.findViewById(R.id.back_card);
             btnEdit = itemView.findViewById(R.id.btn_edit_card_item);

@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="Remember email and password"
         android:layout_marginLeft="10dp"
-        android:textColor="#fff"/>
+        android:textColor="@color/onPrimary"/>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sign_in"
         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
         android:textSize="18dp"
         android:textAllCaps="false"
         android:layout_margin="10dp"
-        android:textColor="#fff"
+        android:textColor="@color/onPrimary"
         android:background="@drawable/button_custom"
         />
     <TextView
@@ -80,11 +80,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:background="@drawable/button_signin_gg"
-        android:drawableLeft="@drawable/sign_in_google"
+        android:drawableLeft="@drawable/google_icon"
         android:paddingLeft="10dp"
         android:text="Sign In With Google"
         android:textAllCaps="false"
-        android:textColor="#fff"
+        android:textColor="@color/onSecondary"
         android:textSize="17dp" />
 
     <LinearLayout
