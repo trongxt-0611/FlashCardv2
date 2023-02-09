@@ -69,18 +69,10 @@ public class SetsFragment extends Fragment {
     private FloatingActionButton btnAddSet;
     private ProgressDialog loader;
 
-    public static SetsFragment newInstance(DatabaseReference reference) {
-        SetsFragment fragment = new SetsFragment(reference);
-        return fragment;
-    }
     public SetsFragment(DatabaseReference cateRef ) {
         this.cateRef = cateRef;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -89,14 +81,6 @@ public class SetsFragment extends Fragment {
         setEvents();
         getNumberOfSet();
         getListSetsFromRealtimeDataBase();
-        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    setEnabled(false);
-                }
-            }
-        });
         return mView;
     }
 
@@ -169,7 +153,6 @@ public class SetsFragment extends Fragment {
         rcvSets.setAdapter(mSetAdapter);
         loader = new ProgressDialog(getContext());
         btnAddSet = mView.findViewById(R.id.btn_add_set);
-        cateRef = ((MainActivity)getActivity()).reference;
     }
     private void getNumberOfSet() {
         setsRef.addValueEventListener(new ValueEventListener() {

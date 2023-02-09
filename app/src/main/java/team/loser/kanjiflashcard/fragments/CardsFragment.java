@@ -1,8 +1,11 @@
 package team.loser.kanjiflashcard.fragments;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -14,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -61,11 +66,6 @@ public class CardsFragment extends Fragment {
     private TextView tvNumOfCard;
     private TextToSpeech mTTSJapanese;
 
-    public static CardsFragment newInstance(DatabaseReference setsRef) {
-        CardsFragment fragment = new CardsFragment(setsRef);
-        return fragment;
-    }
-
     public CardsFragment(DatabaseReference setsReference) {
         // Required empty public constructor
         this.setsReference = setsReference;
@@ -84,7 +84,7 @@ public class CardsFragment extends Fragment {
         setControls();
         getNumberOfCards();
         setEvents();
-        getListCategoriesFromRealtimeDataBase();
+        getListCardFromRealtimeDataBase();
         return mView;
     }
     private void setEvents() {
@@ -103,16 +103,22 @@ public class CardsFragment extends Fragment {
         tvNumOfCard = mView.findViewById(R.id.tv_num_of_card_card_fragment);
         rcvCards.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mTTSJapanese = new TextToSpeech(getContext(), i -> {
-            if(i == TextToSpeech.SUCCESS){
-               int result =  mTTSJapanese.setLanguage(Locale.JAPAN);
-               if(result == TextToSpeech.LANG_MISSING_DATA
-               || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                   Log.e("TTS", "Language not supported");
-               }
-            }
-            else{
-                Log.e("TTS", "Initialization failed");
+        mTTSJapanese = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                /*if(i == TextToSpeech.SUCCESS){
+                    int result =  mTTSJapanese.setLanguage(Locale.JAPAN);
+                    if(result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                }
+                else{
+                    Log.e("TTS", "Initialization failed");
+                }*/
+                if(i != TextToSpeech.ERROR){
+                    mTTSJapanese.setLanguage(Locale.JAPAN);
+                }
             }
         });
         mListCards = new ArrayList<>();
@@ -163,7 +169,7 @@ public class CardsFragment extends Fragment {
                     tvNumOfCard.setText("Add at least 5 cards to start learning");
                 }
                 else{
-                    tvNumOfCard.setText("ALL: "+ count);
+                    tvNumOfCard.setText("ALL CARDS: "+ count);
                 }
             }
 
@@ -173,8 +179,7 @@ public class CardsFragment extends Fragment {
             }
         });
     }
-
-    private void getListCategoriesFromRealtimeDataBase() {
+    private void getListCardFromRealtimeDataBase() {
         flashcardsReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -222,7 +227,6 @@ public class CardsFragment extends Fragment {
             }
         });
     }
-
     //Remove card
     private void onClickRemoveCard(Card card) {
         new AlertDialog.Builder(getContext())
@@ -242,7 +246,6 @@ public class CardsFragment extends Fragment {
                 .setNegativeButton("No", null)
                 .show();
     }
-
     //Edit card
     private void onCLickEditCard(@NonNull Card card) {
         Dialog dialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
@@ -312,7 +315,6 @@ public class CardsFragment extends Fragment {
         });
         dialog.show();
     }
-
     // Add new card
     private void addNewCard() {
         Dialog dialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
@@ -332,6 +334,7 @@ public class CardsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                closeKeyboard();
             }
         });
         btnOk.setOnClickListener(new View.OnClickListener() {
@@ -350,8 +353,6 @@ public class CardsFragment extends Fragment {
                     edDefinition.setError("Definition is required");
                     return;
                 }
-                if (howtoread.isEmpty()) howtoread = "was not added";
-                if (examples.isEmpty()) examples = "was not added";
                 loader.setMessage("Adding...");
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
@@ -371,6 +372,7 @@ public class CardsFragment extends Fragment {
                         loader.dismiss();
                     }
                 });
+                closeKeyboard();
             }
         });
         btnAddNextCard.setOnClickListener(new View.OnClickListener() {
@@ -416,5 +418,22 @@ public class CardsFragment extends Fragment {
         });
         dialog.show();
     }
+    private void closeKeyboard()
+    {
+        // this will give us the view
+        // which is currently focus
+        // in this layout
+        View view = this.getActivity().getCurrentFocus();
 
+        // if nothing is currently
+        // focus then this will protect
+        // the app from crash
+        if (view != null) {
+
+            // now assign the system
+            // service to InputMethodManager
+            InputMethodManager manager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 }

@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(this);
-
         showUserInfoInMenuLeft();
     }
 
@@ -235,27 +234,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-    private void replaceFragment(Fragment fragment, String fragmentName){
+    public void replaceFragment(Fragment fragment, String fragmentName){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.content_frame, fragment);
         fragmentTransaction.addToBackStack(fragmentName);
+        fragmentTransaction.add(R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
     public void goToCardsFragment(DatabaseReference setsRef){
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            CardsFragment cardsFragment = new CardsFragment(setsRef);
-            fragmentTransaction.replace(R.id.content_frame, cardsFragment);
-            fragmentTransaction.addToBackStack(cardsFragment.CARDS_FRAGMENT_NAME);
-            fragmentTransaction.commit();
-            mCurrentFragment = FRAGMENT_CARDS;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        CardsFragment cardsFragment = new CardsFragment(setsRef);
+        fragmentTransaction.addToBackStack(cardsFragment.CARDS_FRAGMENT_NAME);
+        fragmentTransaction.replace(R.id.content_frame, cardsFragment);
+        fragmentTransaction.commit();
     }
     public void goToSetsFragment(DatabaseReference cateRef){
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            SetsFragment setsFragment = new SetsFragment(cateRef);
-            fragmentTransaction.replace(R.id.content_frame, setsFragment);
-            fragmentTransaction.addToBackStack(setsFragment.SETS_FRAGMENT_NAME);
-            fragmentTransaction.commit();
-            mCurrentFragment = FRAGMENT_SETS;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        SetsFragment setsFragment = new SetsFragment(cateRef);
+        fragmentTransaction.addToBackStack(setsFragment.SETS_FRAGMENT_NAME);
+        fragmentTransaction.replace(R.id.content_frame, setsFragment);
+        fragmentTransaction.commit();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#E387C8">
+    android:background="@color/background">
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:cardBackgroundColor="#a4508b"
+        app:cardBackgroundColor="@color/primary"
         app:cardCornerRadius="0dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_toEndOf="@id/btn_close_dialog_card_detail"
                 android:text="ADD NEW CARD"
-                android:textColor="@android:color/white"
+                android:textColor="@color/onPrimary"
                 android:textSize="20sp" />
 
             <ImageButton
@@ -54,121 +54,125 @@
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="11"
-        android:orientation="vertical">
-        <androidx.core.widget.NestedScrollView
-            android:layout_weight="9"
+    <ScrollView
+        android:layout_weight="2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:fitsSystemWindows="true"
                 android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Term:"
-                    android:textColor="@color/white"
-                    android:textSize="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
-                <EditText
-                    android:id="@+id/ed_term_card_detail_dialog"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_custom"
-                    android:hint="TERM"
-                    android:padding="20dp"
-                    android:textColor="#fff"
-                    android:textColorHint="#fff"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Definition:"
-                    android:textColor="@color/white"
-                    android:textSize="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
-                <EditText
-                    android:id="@+id/ed_definition_card_detail_dialog"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="DEFINITION"
-                    android:background="@drawable/edit_text_custom"
-                    android:padding="20dp"
-                    android:textColorHint="#fff"
-                    android:textColor="#fff"
-                    android:textSize="20dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pronunciation:"
-                    android:textColor="@color/white"
-                    android:textSize="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
-                <EditText
-                    android:id="@+id/ed_read_card_detail_dialog"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="PRONUNCIATION"
-                    android:background="@drawable/edit_text_custom"
-                    android:padding="20dp"
-                    android:textColorHint="#fff"
-                    android:textColor="#fff"
-                    android:textSize="20dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Examples:"
-                    android:textColor="@color/white"
-                    android:textSize="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
-                <EditText
-                    android:id="@+id/ed_examples_card_detail_dialog"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Example 1, Example 2,..."
-                    android:background="@drawable/edit_text_custom"
-                    android:padding="20dp"
-                    android:textColorHint="#fff"
-                    android:textColor="#fff"
-                    android:textSize="20dp"
-                    android:minLines="2"/>
-
-
+                    android:orientation="vertical"
+                    android:layout_weight="9"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Term:"
+                        android:textColor="@color/onBackground"
+                        android:textSize="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"/>
+                    <EditText
+                        android:id="@+id/ed_term_card_detail_dialog"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_custom"
+                        android:hint="TERM"
+                        android:padding="20dp"
+                        android:textColor="#fff"
+                        android:textColorHint="#fff"
+                        android:textSize="20dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Definition:"
+                        android:textColor="@color/onBackground"
+                        android:textSize="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="10dp"/>
+                    <EditText
+                        android:id="@+id/ed_definition_card_detail_dialog"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="DEFINITION"
+                        android:background="@drawable/input_custom"
+                        android:padding="20dp"
+                        android:textColorHint="@color/onBackground"
+                        android:textColor="@color/onBackground"
+                        android:textSize="20dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pronunciation:"
+                        android:textColor="@color/onBackground"
+                        android:textSize="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="10dp"/>
+                    <EditText
+                        android:id="@+id/ed_read_card_detail_dialog"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="PRONUNCIATION"
+                        android:background="@drawable/input_custom"
+                        android:padding="20dp"
+                        android:textColorHint="@color/onBackground"
+                        android:textColor="@color/onBackground"
+                        android:textSize="20dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Examples:"
+                        android:textColor="@color/onBackground"
+                        android:textSize="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="10dp"/>
+                    <EditText
+                        android:id="@+id/ed_examples_card_detail_dialog"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Example 1, Example 2,..."
+                        android:background="@drawable/input_custom"
+                        android:padding="20dp"
+                        android:textColorHint="@color/onBackground"
+                        android:textColor="@color/onBackground"
+                        android:textSize="20dp"
+                        android:minLines="2"/>
+                </LinearLayout>
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_add_next_card_card_detail_dialog"
-            android:layout_weight="2"
-            android:background="@drawable/button_rounded"
-            android:layout_gravity="center"
-            android:textColor="#fff"
-            android:textStyle="bold"
+    </ScrollView>
+    <RelativeLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scrollview"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/btn_add_next_card_card_detail_dialog"
+            android:background="@drawable/button_rounded"
+            android:layout_gravity="center"
+            android:textColor="@color/onPrimary"
+            android:textStyle="bold"
             android:textSize="18dp"
             android:text="ADD NEXT CARD"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="0dp"
             android:drawableLeft="@drawable/ic_baseline_add_24"
-            />
-    </LinearLayout>
 
+            />
+    </RelativeLayout>
 
 </LinearLayout>
