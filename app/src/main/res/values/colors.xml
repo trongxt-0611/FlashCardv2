@@ -28,4 +28,6 @@
 
     <color name="incorrect">#B60909</color>
     <color name="correct">#20AC06</color>
+    <color name="onIncorrect">#000000</color>
+    <color name="onCorrect">#FFFFFF</color>
 </resources>

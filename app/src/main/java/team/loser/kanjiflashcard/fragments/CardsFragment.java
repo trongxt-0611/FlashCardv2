@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -48,9 +49,11 @@ import java.util.List;
 import java.util.Locale;
 
 import team.loser.kanjiflashcard.MainActivity;
+import team.loser.kanjiflashcard.QuizActivity;
 import team.loser.kanjiflashcard.R;
 import team.loser.kanjiflashcard.adapters.CardAdapter;
 import team.loser.kanjiflashcard.models.Card;
+import team.loser.kanjiflashcard.models.Set;
 
 public class CardsFragment extends Fragment {
     public static final String CARDS_FRAGMENT_NAME = CardsFragment.class.getName();
@@ -60,7 +63,7 @@ public class CardsFragment extends Fragment {
     private RecyclerView rcvCards;
     private CardAdapter mCardAdapter;
     private List<Card> mListCards;
-    private Button btnAddCard;
+    private Button btnAddCard, btnPractice;
     private ProgressDialog loader;
     private int numOfCards;
     private TextView tvNumOfCard;
@@ -94,10 +97,17 @@ public class CardsFragment extends Fragment {
                 addNewCard();
             }
         });
+        btnPractice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makePractice(setsReference);
+            }
+        });
     }
     private void setControls() {
         flashcardsReference = setsReference.child("flashCards");
         btnAddCard = mView.findViewById(R.id.btn_add_card_cards_fragment);
+        btnPractice = mView.findViewById(R.id.btn_practice);
         loader = new ProgressDialog(getContext());
         rcvCards = mView.findViewById(R.id.rcv_list_cards_cards_fragment);
         tvNumOfCard = mView.findViewById(R.id.tv_num_of_card_card_fragment);
@@ -170,6 +180,9 @@ public class CardsFragment extends Fragment {
                 }
                 else{
                     tvNumOfCard.setText("ALL CARDS: "+ count);
+                }
+                if(numOfCards < 5){
+                    btnPractice.setVisibility(View.GONE);
                 }
             }
 
@@ -417,6 +430,13 @@ public class CardsFragment extends Fragment {
             }
         });
         dialog.show();
+    }
+    private void makePractice(DatabaseReference setRef){
+        Intent intent = new Intent(getContext(), QuizActivity.class);
+        intent.putExtra("SET_REF_URL", setRef.toString());
+        intent.putExtra("IS_REVERSED", false);
+        intent.putExtra("IS_SHUFFLE", false);
+        startActivity(intent);
     }
     private void closeKeyboard()
     {

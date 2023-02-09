@@ -24,8 +24,8 @@
     <color name="onSurface">#FFFFFF</color>
     <color name="onError">#000000</color>
 
-
-
-    <color name="incorrect">#B60909</color>
-    <color name="correct">#20AC06</color>
+    <color name="incorrect">#CF475F</color>
+    <color name="correct">#1B8E06</color>
+    <color name="onIncorrect">#000000</color>
+    <color name="onCorrect">#FFFFFF</color>
 </resources>

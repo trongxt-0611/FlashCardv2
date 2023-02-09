@@ -117,17 +117,17 @@ public class SetsFragment extends Fragment {
                 ((MainActivity)getActivity()).goToCardsFragment(setRef);
             }
             @Override
-            public void onClickStartReview(Set set) {
+            public void onClickStartReview(DatabaseReference setRef) {
                 Intent intent = new Intent(getContext(), QuizActivity.class);
-                intent.putExtra("SET_ID", set.getId());
+                intent.putExtra("SET_REF_URL", setRef.toString());
                 intent.putExtra("IS_REVERSED", false);
                 intent.putExtra("IS_SHUFFLE", false);
                 startActivity(intent);
             }
             @Override
-            public void onClickStartPractice(Set set) {
+            public void onClickStartPractice(DatabaseReference setRef) {
                 Intent intent = new Intent(getContext(), QuizActivity.class);
-                intent.putExtra("SET_ID", set.getId());
+                intent.putExtra("SET_REF_URL", setRef.toString());
                 intent.putExtra("IS_SHUFFLE", true);
 
                 new AlertDialog.Builder(getContext())
@@ -291,12 +291,12 @@ public class SetsFragment extends Fragment {
     }
     private void onClickDeleteSet(Set set){
         new AlertDialog.Builder(getContext())
-                .setTitle("Remove Category")
-                .setMessage("Are you sure you want to remove this Category?")
+                .setTitle("Remove Set")
+                .setMessage("All cards belong to this set will be delete! Are you sure to remove it?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        cateRef.child(set.getId()).removeValue(new DatabaseReference.CompletionListener() {
+                        cateRef.child("sets").child(set.getId()).removeValue(new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                 Toast.makeText(getContext(), "delete successful", Toast.LENGTH_SHORT).show();

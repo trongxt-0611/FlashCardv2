@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="#E387C8"
+    android:background="@color/background"
     android:gravity="center">
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/check_icon"
+            android:src="@drawable/correct"
             android:layout_gravity="center"
             android:scaleType="fitXY"
             android:background="@android:color/transparent"/>
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Review complete!"
-            android:textColor="#fff"
+            android:textColor="@color/onBackground"
             android:textStyle="bold"
             android:layout_gravity="center"
             android:textSize="25dp"/>
@@ -33,23 +33,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp">
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/back_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="15dp">
+            app:cardElevation="4dp"
+            android:background="@color/surface"
+            app:cardCornerRadius="10dp">
             <LinearLayout
                 android:id="@+id/layout_options"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#CC64AD"
                 android:orientation="vertical">
                 <TextView
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Summary"
-                    android:textColor="#fff"
+                    android:textColor="@color/onSurface"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     android:textSize="25dp"
@@ -66,7 +67,7 @@
                         android:text="Correct answers: "
                         android:textSize="25dp"
                         android:textStyle="bold"
-                        android:textColor="#3CDA36"/>
+                        android:textColor="@color/correct"/>
                     <TextView
                         android:id="@+id/tv_correct_count"
                         android:layout_width="wrap_content"
@@ -74,7 +75,7 @@
                         android:text="10"
                         android:textSize="24dp"
                         android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
+                        android:textColor="@color/onSurface"/>
                 </LinearLayout>
                 <LinearLayout
                     android:gravity="center"
@@ -88,7 +89,7 @@
                         android:text="Incorrect answers: "
                         android:textSize="25dp"
                         android:textStyle="bold"
-                        android:textColor="#E40D2D"/>
+                        android:textColor="@color/incorrect"/>
                     <TextView
                         android:id="@+id/tv_incorrect_count"
                         android:layout_width="wrap_content"
@@ -96,7 +97,7 @@
                         android:text="10"
                         android:textSize="24dp"
                         android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
+                        android:textColor="@color/onSurface"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_view_result_dialog"
@@ -104,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="VIEW RESULT"
                     android:background="@drawable/button_rounded_transparent"
-                    android:textColor="#5f0a87"
+                    android:textColor="@color/primary"
                     android:layout_gravity="center"
                     android:textSize="20dp"
                     android:paddingRight="20dp"
@@ -114,7 +115,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_done_dialog"
@@ -125,5 +126,5 @@
         android:background="@drawable/button_rounded"
         android:textSize="20dp"
         android:padding="10dp"
-        android:textColor="#fff"/>
+        android:textColor="@color/onPrimary"/>
 </LinearLayout>

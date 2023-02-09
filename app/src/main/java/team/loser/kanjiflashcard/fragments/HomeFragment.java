@@ -263,7 +263,7 @@ public class HomeFragment extends Fragment implements IOnBackPressed {
     private void onClickDeleteCategory(Category category){
         new AlertDialog.Builder(getContext())
                 .setTitle("Remove Category")
-                .setMessage("Are you sure you want to remove this Category?")
+                .setMessage("All sets belong to this category will be delete. Are you sure to remove it?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

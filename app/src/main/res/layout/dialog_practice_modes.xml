@@ -12,7 +12,7 @@
         android:background="@drawable/title_corner_top_dialog"
         android:gravity="center"
         android:padding="10dp"
-        android:text="INCORRECT ANSWERS"
+        android:text="CHOOSE PRACTICE MODE"
         android:textColor="@color/onPrimary"
         android:textSize="25dp"
         android:textStyle="bold" />
