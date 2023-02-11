@@ -7,9 +7,13 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +37,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -48,9 +54,14 @@ import java.util.List;
 import java.util.Locale;
 
 import team.loser.kanjiflashcard.MainActivity;
+import team.loser.kanjiflashcard.QuizActivity;
 import team.loser.kanjiflashcard.R;
 import team.loser.kanjiflashcard.adapters.CardAdapter;
+import team.loser.kanjiflashcard.adapters.PracticeOptionAdapter;
 import team.loser.kanjiflashcard.models.Card;
+import team.loser.kanjiflashcard.models.PracticeOption;
+import team.loser.kanjiflashcard.models.Set;
+import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 
 public class CardsFragment extends Fragment {
     public static final String CARDS_FRAGMENT_NAME = CardsFragment.class.getName();
@@ -60,11 +71,14 @@ public class CardsFragment extends Fragment {
     private RecyclerView rcvCards;
     private CardAdapter mCardAdapter;
     private List<Card> mListCards;
-    private Button btnAddCard;
+    private Button btnAddCard, btnPractice;
     private ProgressDialog loader;
     private int numOfCards;
     private TextView tvNumOfCard;
     private TextToSpeech mTTSJapanese;
+    private PracticeOptionAdapter mPracticeOptionAdapter;
+    private ArrayList<PracticeOption> mListPracticeOptions;
+    private int mPracticeOption;
 
     public CardsFragment(DatabaseReference setsReference) {
         // Required empty public constructor
@@ -85,6 +99,7 @@ public class CardsFragment extends Fragment {
         getNumberOfCards();
         setEvents();
         getListCardFromRealtimeDataBase();
+        initPracticeOptions();
         return mView;
     }
     private void setEvents() {
@@ -94,10 +109,17 @@ public class CardsFragment extends Fragment {
                 addNewCard();
             }
         });
+        btnPractice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makePractice(setsReference);
+            }
+        });
     }
     private void setControls() {
         flashcardsReference = setsReference.child("flashCards");
         btnAddCard = mView.findViewById(R.id.btn_add_card_cards_fragment);
+        btnPractice = mView.findViewById(R.id.btn_practice);
         loader = new ProgressDialog(getContext());
         rcvCards = mView.findViewById(R.id.rcv_list_cards_cards_fragment);
         tvNumOfCard = mView.findViewById(R.id.tv_num_of_card_card_fragment);
@@ -106,16 +128,6 @@ public class CardsFragment extends Fragment {
         mTTSJapanese = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
-                /*if(i == TextToSpeech.SUCCESS){
-                    int result =  mTTSJapanese.setLanguage(Locale.JAPAN);
-                    if(result == TextToSpeech.LANG_MISSING_DATA
-                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "Language not supported");
-                    }
-                }
-                else{
-                    Log.e("TTS", "Initialization failed");
-                }*/
                 if(i != TextToSpeech.ERROR){
                     mTTSJapanese.setLanguage(Locale.JAPAN);
                 }
@@ -153,6 +165,15 @@ public class CardsFragment extends Fragment {
         super.onDestroy();
     }
 
+    private void initPracticeOptions() {
+        mListPracticeOptions = new ArrayList<PracticeOption>();
+        PracticeOption option1 = new PracticeOption("0", getString(R.string.quiz_review_title),getString(R.string.quiz_review_des));
+        PracticeOption option2 = new PracticeOption("1", getString(R.string.quiz_practice_title), getString(R.string.quiz_practice_des));
+        PracticeOption option3 = new PracticeOption("2", getString(R.string.quiz_practice_reversed_title),getString(R.string.quiz_practice_reversed_des));
+        this.mListPracticeOptions.add(option1);
+        this.mListPracticeOptions.add(option2);
+        this.mListPracticeOptions.add(option3);
+    }
     private void getNumberOfCards() {
         flashcardsReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -170,6 +191,9 @@ public class CardsFragment extends Fragment {
                 }
                 else{
                     tvNumOfCard.setText("ALL CARDS: "+ count);
+                }
+                if(numOfCards < 5){
+                    btnPractice.setVisibility(View.GONE);
                 }
             }
 
@@ -417,6 +441,61 @@ public class CardsFragment extends Fragment {
             }
         });
         dialog.show();
+    }
+    private void makePractice(DatabaseReference setRef){
+        Dialog optionsDialog = new Dialog(getContext());
+        optionsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        optionsDialog.setContentView(R.layout.dialog_practice_modes);
+        Window window = optionsDialog.getWindow();
+        if (window == null) return;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+        optionsDialog.setCancelable(true);
+
+        RecyclerView rcvOptions = optionsDialog.findViewById(R.id.rcv_practice_options_dialog);
+        LinearLayoutManager linearLayoutManager  = new LinearLayoutManager(getContext());
+        rcvOptions.setLayoutManager(linearLayoutManager);
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10, true, false);
+        rcvOptions.addItemDecoration(itemDecorator);
+
+        mPracticeOptionAdapter  = new PracticeOptionAdapter(mListPracticeOptions, new PracticeOptionAdapter.IClickListener() {
+            @Override
+            public void onClickItemPracticeOption(int index) {
+                mPracticeOption = index;
+            }
+        });
+        rcvOptions.setAdapter(mPracticeOptionAdapter);
+        optionsDialog.show();
+        Button btnStart = optionsDialog.findViewById(R.id.btn_start_practice_options_dialog);
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (mPracticeOption){
+                    case 0:
+                        startActivity(setUpIntentPractice(setRef.toString(), false, false));
+                        break;
+                    case 1:
+                        startActivity(setUpIntentPractice(setRef.toString(), false, true));
+                        break;
+                    case 2:
+                        startActivity(setUpIntentPractice(setRef.toString(), true, true));
+                      break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+    }
+    private Intent setUpIntentPractice(String setRefUrl, boolean isReversed, boolean isShuffle){
+        Intent intent = new Intent(getContext(), QuizActivity.class);
+        intent.putExtra("SET_REF_URL", setRefUrl);
+        intent.putExtra("IS_REVERSED", isReversed);
+        intent.putExtra("IS_SHUFFLE", isShuffle);
+        return intent;
     }
     private void closeKeyboard()
     {

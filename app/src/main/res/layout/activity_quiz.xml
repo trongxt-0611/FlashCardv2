@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#430E5C"
+    android:background="@color/background"
     android:orientation="vertical"
     android:padding="10dp"
     android:weightSum="10"
@@ -19,88 +19,121 @@
         app:flipDuration="500"
         app:flipEnabled="true"
         app:flipType="horizontal"
-        app:autoFlipBack="true"
-        app:autoFlipBackTime="5000">
-<!--        back-->
+        app:autoFlipBack="false">
+<!--back-->
         <LinearLayout
-            android:padding="10dp"
-            android:background="@drawable/quiz_card_back_rounded"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pronunciation:"
-                android:textColor="#fff"
-                android:textSize="18dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_howtoread_quiz"
-                android:textColor="#fff"
-                android:textSize="35dp"
-                android:layout_gravity="center"
-                android:text=""/>
+            android:layout_height="match_parent">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                >
+                <LinearLayout
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pronunciation:"
+                        android:textColor="@color/onSurface"
+                        android:textSize="18dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_howtoread_quiz"
+                        android:textColor="@color/onSurface"
+                        android:textSize="35dp"
+                        android:layout_gravity="center"
+                        android:text=""/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Examples:"
-                android:textColor="#fff"
-                android:textSize="18dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_examples_quiz"
-                android:textColor="#fff"
-                android:textSize="35dp"
-                android:layout_gravity="center" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Examples:"
+                        android:textColor="@color/onSurface"
+                        android:textSize="18dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_examples_quiz"
+                        android:textColor="@color/onSurface"
+                        android:textSize="35dp"
+                        android:layout_gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 <!--front-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/quiz_card_rounded"
-            android:orientation="vertical"
-            android:text="Question"
-            android:textColor="#fff"
-            android:textSize="35dp"
-            android:weightSum="10">
+            android:layout_height="match_parent">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8sp"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:text="Question"
+                    android:textColor="@color/onSurface"
+                    android:textSize="35dp"
+                    android:weightSum="10">
 
-            <TextView
-                android:id="@+id/tv_question_index"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0"
-                android:text="1/10"
-                android:textColor="#fff"
-                android:textSize="25dp"
-                android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_question_index"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0"
+                        android:text="1/10"
+                        android:textColor="#fff"
+                        android:textSize="25dp"
+                        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_question"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="9"
-                android:gravity="center"
-                android:text="Question"
-                android:textColor="#fff"
-                android:textSize="50dp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/tv_press_to_flip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Press to see more information"
-                android:layout_gravity="center"
-                android:textColor="#B3FFFFFF"
-                android:layout_weight="1" />
+                    <TextView
+                        android:id="@+id/tv_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="9"
+                        android:gravity="center"
+                        android:text="Question"
+                        android:textColor="@color/primary"
+                        android:textSize="40dp"
+                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_press_to_flip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Press to see more information"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+
+                            android:textColor="@color/onSurface"
+                            android:layout_weight="1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </com.wajahatkarim3.easyflipview.EasyFlipView>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <ImageView
+            android:id="@+id/btn_speaker"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/card_speaker"/>
+    </RelativeLayout>
+<!--options-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,63 +144,78 @@
         android:textColor="#fff"
         android:textSize="35dp"
         android:weightSum="5">
-
-        <TextView
-            android:id="@+id/btn_option1"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:id="@+id/background_option1"
             android:layout_weight="1"
-            android:background="@drawable/quiz_option_rounded"
-            android:padding="5dp"
-            android:text="Option 1"
-            android:textColor="#fff"
-            android:textSize="30dp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/btn_option2"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/btn_option1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Option"
+                android:textColor="@color/primary"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:id="@+id/background_option2"
             android:layout_weight="1"
-            android:background="@drawable/quiz_option_rounded"
-            android:padding="5dp"
-            android:text="Option 2"
-            android:textColor="#fff"
-            android:textSize="30dp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/btn_option3"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/btn_option2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Option"
+                android:textColor="@color/primary"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:id="@+id/background_option3"
             android:layout_weight="1"
-            android:background="@drawable/quiz_option_rounded"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="Option 3"
-            android:textColor="#fff"
-            android:textSize="30dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/btn_option4"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/btn_option3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Option"
+                android:textColor="@color/primary"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:id="@+id/background_option4"
             android:layout_weight="1"
-            android:background="@drawable/quiz_option_rounded"
-            android:padding="5dp"
-            android:text="Option 4"
-            android:textColor="#fff"
-            android:textSize="30dp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+            <TextView
+                android:id="@+id/btn_option4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Option"
+                android:textColor="@color/primary"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
 

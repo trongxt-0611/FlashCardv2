@@ -48,8 +48,10 @@ import java.util.Map;
 import team.loser.kanjiflashcard.MainActivity;
 import team.loser.kanjiflashcard.QuizActivity;
 import team.loser.kanjiflashcard.R;
+import team.loser.kanjiflashcard.adapters.PracticeOptionAdapter;
 import team.loser.kanjiflashcard.adapters.SetAdapter;
 import team.loser.kanjiflashcard.models.Category;
+import team.loser.kanjiflashcard.models.PracticeOption;
 import team.loser.kanjiflashcard.models.Set;
 import team.loser.kanjiflashcard.utils.IOnBackPressed;
 import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
@@ -68,6 +70,9 @@ public class SetsFragment extends Fragment {
     private List<Set> mListSets;
     private FloatingActionButton btnAddSet;
     private ProgressDialog loader;
+    private PracticeOptionAdapter mPracticeOptionAdapter;
+    private ArrayList<PracticeOption> mListPracticeOptions;
+    private int mPracticeOption;
 
     public SetsFragment(DatabaseReference cateRef ) {
         this.cateRef = cateRef;
@@ -81,6 +86,7 @@ public class SetsFragment extends Fragment {
         setEvents();
         getNumberOfSet();
         getListSetsFromRealtimeDataBase();
+        initPracticeOptions();
         return mView;
     }
 
@@ -102,6 +108,8 @@ public class SetsFragment extends Fragment {
         SpacingItemDecorator itemDecorator = new SpacingItemDecorator(20, true, false);
         rcvSets.addItemDecoration(itemDecorator);
 
+
+
         mListSets = new ArrayList<>();
         mSetAdapter = new SetAdapter(mListSets, this, new SetAdapter.IClickListener() {
             @Override
@@ -117,42 +125,80 @@ public class SetsFragment extends Fragment {
                 ((MainActivity)getActivity()).goToCardsFragment(setRef);
             }
             @Override
-            public void onClickStartReview(Set set) {
+            public void onClickStartReview(DatabaseReference setRef) {
                 Intent intent = new Intent(getContext(), QuizActivity.class);
-                intent.putExtra("SET_ID", set.getId());
+                intent.putExtra("SET_REF_URL", setRef.toString());
                 intent.putExtra("IS_REVERSED", false);
                 intent.putExtra("IS_SHUFFLE", false);
                 startActivity(intent);
             }
             @Override
-            public void onClickStartPractice(Set set) {
-                Intent intent = new Intent(getContext(), QuizActivity.class);
-                intent.putExtra("SET_ID", set.getId());
-                intent.putExtra("IS_SHUFFLE", true);
-
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Practice mode")
-                        .setMessage("Do you want reverse term and definition?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                intent.putExtra("IS_REVERSED", true);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                intent.putExtra("IS_REVERSED", false);
-                                startActivity(intent);
-                            }
-                        })
-                        .show();
+            public void onClickStartPractice(DatabaseReference setRef) {
+                makePractice(setRef);
             }
         });
         rcvSets.setAdapter(mSetAdapter);
         loader = new ProgressDialog(getContext());
         btnAddSet = mView.findViewById(R.id.btn_add_set);
+    }
+    private void makePractice(DatabaseReference setRef){
+        Dialog optionsDialog = new Dialog(getContext());
+        optionsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        optionsDialog.setContentView(R.layout.dialog_practice_modes);
+        Window window = optionsDialog.getWindow();
+        if (window == null) return;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+        optionsDialog.setCancelable(true);
+
+        RecyclerView rcvOptions = optionsDialog.findViewById(R.id.rcv_practice_options_dialog);
+        LinearLayoutManager linearLayoutManager  = new LinearLayoutManager(getContext());
+        rcvOptions.setLayoutManager(linearLayoutManager);
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10, true, false);
+        rcvOptions.addItemDecoration(itemDecorator);
+
+        mPracticeOptionAdapter  = new PracticeOptionAdapter(mListPracticeOptions, new PracticeOptionAdapter.IClickListener() {
+            @Override
+            public void onClickItemPracticeOption(int index) {
+                mPracticeOption = index;
+            }
+        });
+        rcvOptions.setAdapter(mPracticeOptionAdapter);
+        optionsDialog.show();
+        Button btnStart = optionsDialog.findViewById(R.id.btn_start_practice_options_dialog);
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (mPracticeOption){
+                    case 0:
+                        startActivity(setUpIntentPractice(setRef.toString(), false, true));
+                        break;
+                    case 1:
+                        startActivity(setUpIntentPractice(setRef.toString(), true, true));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+    }
+    private void initPracticeOptions() {
+        mListPracticeOptions = new ArrayList<PracticeOption>();
+        PracticeOption option2 = new PracticeOption("1", getString(R.string.quiz_practice_title), getString(R.string.quiz_practice_des));
+        PracticeOption option3 = new PracticeOption("2", getString(R.string.quiz_practice_reversed_title),getString(R.string.quiz_practice_reversed_des));
+        this.mListPracticeOptions.add(option2);
+        this.mListPracticeOptions.add(option3);
+    }
+    private Intent setUpIntentPractice(String setRefUrl, boolean isReversed, boolean isShuffle){
+        Intent intent = new Intent(getContext(), QuizActivity.class);
+        intent.putExtra("SET_REF_URL", setRefUrl);
+        intent.putExtra("IS_REVERSED", isReversed);
+        intent.putExtra("IS_SHUFFLE", isShuffle);
+        return intent;
     }
     private void getNumberOfSet() {
         setsRef.addValueEventListener(new ValueEventListener() {
@@ -291,12 +337,12 @@ public class SetsFragment extends Fragment {
     }
     private void onClickDeleteSet(Set set){
         new AlertDialog.Builder(getContext())
-                .setTitle("Remove Category")
-                .setMessage("Are you sure you want to remove this Category?")
+                .setTitle("Remove Set")
+                .setMessage("All cards belong to this set will be delete! Are you sure to remove it?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        cateRef.child(set.getId()).removeValue(new DatabaseReference.CompletionListener() {
+                        cateRef.child("sets").child(set.getId()).removeValue(new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                 Toast.makeText(getContext(), "delete successful", Toast.LENGTH_SHORT).show();

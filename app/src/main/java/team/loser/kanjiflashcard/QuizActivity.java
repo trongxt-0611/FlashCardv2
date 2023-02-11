@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,11 +23,14 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +46,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import team.loser.kanjiflashcard.adapters.ResultAdapter;
@@ -52,6 +57,7 @@ import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 
 public class QuizActivity extends AppCompatActivity {
     private TextView btnOption1, btnOption2, btnOption3, btnOption4, tvPronunciation, tvExamples;
+    private MaterialCardView bgOption1, bgOption2, bgOption3, bgOption4;
     private TextView tvQuesIndex, tvQuestion;
     private DatabaseReference flashCardRoot;
 
@@ -59,7 +65,7 @@ public class QuizActivity extends AppCompatActivity {
     private ArrayList<Question> mListQuestions;
     private ArrayList<String> mListOptions;
     private ArrayList<ResultItem> mListResultItems;
-    private ArrayList<Question> mListIncorrectQues;
+    private ArrayList<Question> mListIncorrectQuestions;
     int questNum = 0;
     int correctAns = 0;
     boolean isFirstChoiceCorrect = true;
@@ -68,6 +74,8 @@ public class QuizActivity extends AppCompatActivity {
     private Question currentQues;
     private EasyFlipView easyFlipView;
     private TextView tvPressToFlip;
+    private ImageView btnSpeaker;
+    private TextToSpeech mTTSJapanese;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +86,24 @@ public class QuizActivity extends AppCompatActivity {
         setEvents();
     }
 
+    @Override
+    protected void onDestroy() {
+        if(mTTSJapanese != null){
+            mTTSJapanese.stop();
+            mTTSJapanese.shutdown();
+        }
+        super.onDestroy();
+    }
 
     private void setControls() {
         btnOption1 = findViewById(R.id.btn_option1);
         btnOption2 = findViewById(R.id.btn_option2);
         btnOption3 = findViewById(R.id.btn_option3);
         btnOption4 = findViewById(R.id.btn_option4);
+        bgOption1 = findViewById(R.id.background_option1);
+        bgOption2 = findViewById(R.id.background_option2);
+        bgOption3 = findViewById(R.id.background_option3);
+        bgOption4 = findViewById(R.id.background_option4);
         tvQuesIndex = findViewById(R.id.tv_question_index);
         tvQuestion = findViewById(R.id.tv_question);
         tvPronunciation = findViewById(R.id.tv_howtoread_quiz);
@@ -93,17 +113,26 @@ public class QuizActivity extends AppCompatActivity {
         mListOptions = new ArrayList<>();
         mListQuestions = new ArrayList<>();
         mListResultItems = new ArrayList<>();
-        mListIncorrectQues = new ArrayList<>();
+        mListIncorrectQuestions = new ArrayList<>();
         tvPressToFlip = findViewById(R.id.tv_press_to_flip);
+        btnSpeaker = findViewById(R.id.btn_speaker);
+        mTTSJapanese = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                if(i != TextToSpeech.ERROR){
+                    mTTSJapanese.setLanguage(Locale.JAPAN);
+                }
+            }
+        });
 
 
         Intent intent = getIntent();
-        String categoryId = intent.getStringExtra("CATEGORY_ID");
+        String set_ref_url= intent.getStringExtra("SET_REF_URL");
         boolean reverse = intent.getBooleanExtra("IS_REVERSED", false);
         boolean shuffle = intent.getBooleanExtra("IS_SHUFFLE", false);
         isReversed = reverse;
         isShuffleQues = shuffle;
-        flashCardRoot = MainActivity.reference.child(categoryId).child("flashCards");
+        flashCardRoot = FirebaseDatabase.getInstance().getReferenceFromUrl(set_ref_url).child("flashCards");
 
     }
 
@@ -126,6 +155,14 @@ public class QuizActivity extends AppCompatActivity {
             selectedOption = 3;
             checkAnswer(selectedOption);
         });
+        btnSpeaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(">>>>>>>>>>>>>", "ahahahah");
+                String text = currentQues.getQuestion();
+                mTTSJapanese.speak(text, TextToSpeech.QUEUE_FLUSH, null,  ""  );
+            }
+        });
     }
 
     private void checkAnswer(int selectedOption) {
@@ -133,25 +170,29 @@ public class QuizActivity extends AppCompatActivity {
         if (selectedOption == mListQuestions.get(questNum).getCorrectAns()) {
             //correct
             if (selectedOption == 0) {
-                btnOption1.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.correct));
+                btnOption1.setBackgroundColor(getResources().getColor(R.color.correct));
+                btnOption1.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
                 btnOption2.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 1) {
-                btnOption2.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.correct));
+                btnOption2.setBackgroundColor(getResources().getColor(R.color.correct));
+                btnOption2.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 2) {
-                btnOption3.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.correct));
+                btnOption3.setBackgroundColor(getResources().getColor(R.color.correct));
+                btnOption3.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption2.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 3) {
-                btnOption4.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.correct));
+                btnOption4.setBackgroundColor(getResources().getColor(R.color.correct));
+                btnOption4.setTextColor(ContextCompat.getColorStateList(QuizActivity.this, R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption2.setEnabled(false);
@@ -166,23 +207,26 @@ public class QuizActivity extends AppCompatActivity {
             //wrong
             isFirstChoiceCorrect = false;
             if(currentQues!=null){
-                if(!mListIncorrectQues.contains(currentQues)){
-                    mListIncorrectQues.add(currentQues);
+                if(!mListIncorrectQuestions.contains(currentQues)){
+                    mListIncorrectQuestions.add(currentQues);
                     getResults(currentQues.getQuestion(), currentQues.getDefinition());
                 }
             }
             if (selectedOption == 0) {
-                btnOption1.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.incorrect));
+                btnOption1.setBackgroundColor(getResources().getColor(R.color.incorrect));
+                btnOption1.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
             }
             if (selectedOption == 1) {
-                btnOption2.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.incorrect));
+                btnOption2.setBackgroundColor(getResources().getColor(R.color.incorrect));
+                btnOption2.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
             }
             if (selectedOption == 2) {
-
-                btnOption3.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.incorrect));
+                btnOption3.setBackgroundColor(getResources().getColor(R.color.incorrect));
+                btnOption3.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
             }
             if (selectedOption == 3) {
-                btnOption4.setBackgroundTintList(ContextCompat.getColorStateList(QuizActivity.this, R.color.incorrect));
+                btnOption4.setBackgroundColor(getResources().getColor(R.color.incorrect));
+                btnOption4.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
             }
 
         }
@@ -190,10 +234,14 @@ public class QuizActivity extends AppCompatActivity {
 
     private void changeQuestion() {
         isFirstChoiceCorrect = true;
-        btnOption1.setBackgroundTintList(null);
-        btnOption2.setBackgroundTintList(null);
-        btnOption3.setBackgroundTintList(null);
-        btnOption4.setBackgroundTintList(null);
+        btnOption1.setBackgroundColor(0x00000000);
+        btnOption2.setBackgroundColor(0x00000000);
+        btnOption3.setBackgroundColor(0x00000000);
+        btnOption4.setBackgroundColor(0x00000000);
+        btnOption1.setTextColor(getResources().getColor(R.color.primary));
+        btnOption2.setTextColor(getResources().getColor(R.color.primary));
+        btnOption3.setTextColor(getResources().getColor(R.color.primary));
+        btnOption4.setTextColor(getResources().getColor(R.color.primary));
         btnOption1.setEnabled(true);
         btnOption3.setEnabled(true);
         btnOption2.setEnabled(true);
@@ -218,8 +266,8 @@ public class QuizActivity extends AppCompatActivity {
             btnDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    dialog.dismiss();
                     Intent intent = new Intent(QuizActivity.this, MainActivity.class);
-                    finish();
                     startActivity(intent);
                 }
             });
@@ -273,10 +321,12 @@ public class QuizActivity extends AppCompatActivity {
                     Collections.shuffle(mListQuestions);
                     easyFlipView.setEnabled(false);
                     tvPressToFlip.setVisibility(View.GONE);
+                    btnSpeaker.setVisibility(View.GONE);
                 }
                 else {
                     easyFlipView.setEnabled(true);
                     tvPressToFlip.setVisibility(View.VISIBLE);
+                    btnSpeaker.setVisibility(View.VISIBLE);
                 }
                 setQuestion(questNum);
             }

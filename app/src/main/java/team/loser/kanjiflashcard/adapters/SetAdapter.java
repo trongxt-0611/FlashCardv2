@@ -44,8 +44,8 @@ public class SetAdapter extends RecyclerView.Adapter<SetAdapter.SetViewHolder> {
         void onClickUpdateItem(Set set);
         void onClickDeleteItem(Set set);
         void onClickItemSet(DatabaseReference setRef);
-        void onClickStartReview(Set set);
-        void onClickStartPractice(Set set);
+        void onClickStartReview(DatabaseReference setRef);
+        void onClickStartPractice(DatabaseReference setRef);
     }
 
     public SetAdapter(List<Set> mListSets, SetsFragment fragment, IClickListener iClickListener) {
@@ -87,10 +87,10 @@ public class SetAdapter extends RecyclerView.Adapter<SetAdapter.SetViewHolder> {
             if (holder.btnReview_Add.getText() == "ADD CARDS") {
                 mIClickListener.onClickItemSet(mCateReference.child("sets").child(set.getId()));
             } else {
-                mIClickListener.onClickStartReview(set);
+                mIClickListener.onClickStartReview(mCateReference.child("sets").child(set.getId()));
             }
         });
-        holder.btnPractice.setOnClickListener(view -> mIClickListener.onClickStartPractice(set));
+        holder.btnPractice.setOnClickListener(view -> mIClickListener.onClickStartPractice(mCateReference.child("sets").child(set.getId())));
         holder.tvCateName.setOnClickListener(view -> mIClickListener.onClickItemSet(mCateReference.child("sets").child(set.getId())));
         //layout click
         holder.tvNumOfCards.setOnClickListener(view -> mIClickListener.onClickItemSet(mCateReference.child("sets").child(set.getId())));
