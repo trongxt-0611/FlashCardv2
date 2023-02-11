@@ -28,4 +28,13 @@
     <string name="previous">Previous</string>
 
     <string name="action_search">Search</string>
+
+    <string name="quiz_review_title">Basic Review</string>
+    <string name="quiz_review_des">You can see all information of word</string>
+
+    <string name="quiz_practice_title">Multiple Answer</string>
+    <string name="quiz_practice_des">Select the correct answer</string>
+
+    <string name="quiz_practice_reversed_title">Reversed Practice</string>
+    <string name="quiz_practice_reversed_des">Word definition is the question</string>
 </resources>

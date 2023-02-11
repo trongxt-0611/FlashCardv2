@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +23,8 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import team.loser.kanjiflashcard.adapters.ResultAdapter;
@@ -70,6 +74,8 @@ public class QuizActivity extends AppCompatActivity {
     private Question currentQues;
     private EasyFlipView easyFlipView;
     private TextView tvPressToFlip;
+    private ImageView btnSpeaker;
+    private TextToSpeech mTTSJapanese;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +86,14 @@ public class QuizActivity extends AppCompatActivity {
         setEvents();
     }
 
+    @Override
+    protected void onDestroy() {
+        if(mTTSJapanese != null){
+            mTTSJapanese.stop();
+            mTTSJapanese.shutdown();
+        }
+        super.onDestroy();
+    }
 
     private void setControls() {
         btnOption1 = findViewById(R.id.btn_option1);
@@ -101,6 +115,15 @@ public class QuizActivity extends AppCompatActivity {
         mListResultItems = new ArrayList<>();
         mListIncorrectQuestions = new ArrayList<>();
         tvPressToFlip = findViewById(R.id.tv_press_to_flip);
+        btnSpeaker = findViewById(R.id.btn_speaker);
+        mTTSJapanese = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                if(i != TextToSpeech.ERROR){
+                    mTTSJapanese.setLanguage(Locale.JAPAN);
+                }
+            }
+        });
 
 
         Intent intent = getIntent();
@@ -109,7 +132,6 @@ public class QuizActivity extends AppCompatActivity {
         boolean shuffle = intent.getBooleanExtra("IS_SHUFFLE", false);
         isReversed = reverse;
         isShuffleQues = shuffle;
-        /*flashCardRoot = MainActivity.reference.child(cateId).child("sets").child(setId).child("flashCards");*/
         flashCardRoot = FirebaseDatabase.getInstance().getReferenceFromUrl(set_ref_url).child("flashCards");
 
     }
@@ -132,6 +154,14 @@ public class QuizActivity extends AppCompatActivity {
         btnOption4.setOnClickListener(view -> {
             selectedOption = 3;
             checkAnswer(selectedOption);
+        });
+        btnSpeaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(">>>>>>>>>>>>>", "ahahahah");
+                String text = currentQues.getQuestion();
+                mTTSJapanese.speak(text, TextToSpeech.QUEUE_FLUSH, null,  ""  );
+            }
         });
     }
 
@@ -291,10 +321,12 @@ public class QuizActivity extends AppCompatActivity {
                     Collections.shuffle(mListQuestions);
                     easyFlipView.setEnabled(false);
                     tvPressToFlip.setVisibility(View.GONE);
+                    btnSpeaker.setVisibility(View.GONE);
                 }
                 else {
                     easyFlipView.setEnabled(true);
                     tvPressToFlip.setVisibility(View.VISIBLE);
+                    btnSpeaker.setVisibility(View.VISIBLE);
                 }
                 setQuestion(questNum);
             }
