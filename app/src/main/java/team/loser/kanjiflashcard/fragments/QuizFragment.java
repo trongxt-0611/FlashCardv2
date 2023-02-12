@@ -1,15 +1,6 @@
-package team.loser.kanjiflashcard;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package team.loser.kanjiflashcard.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,19 +8,22 @@ import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,24 +32,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import team.loser.kanjiflashcard.R;
 import team.loser.kanjiflashcard.adapters.ResultAdapter;
 import team.loser.kanjiflashcard.models.Card;
 import team.loser.kanjiflashcard.models.Question;
 import team.loser.kanjiflashcard.models.ResultItem;
+import team.loser.kanjiflashcard.utils.IOnBackPressed;
 import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizFragment extends Fragment implements IOnBackPressed {
+    public static final String QUIZ_FRAGMENT_NAME = QuizFragment.class.getName();
+    private View mView;
     private TextView btnOption1, btnOption2, btnOption3, btnOption4, tvPronunciation, tvExamples;
     private MaterialCardView bgOption1, bgOption2, bgOption3, bgOption4;
     private TextView tvQuesIndex, tvQuestion;
@@ -76,68 +69,33 @@ public class QuizActivity extends AppCompatActivity {
     private TextView tvPressToFlip;
     private ImageView btnSpeaker;
     private TextToSpeech mTTSJapanese;
+    private String setsReference;
+    private HashMap<String, String> config;
+    int selectedOption = -1;
+
+    public QuizFragment(String setsReference) {
+        // Required empty public constructor
+        this.setsReference = setsReference;
+    }
+    public QuizFragment(HashMap<String, String> config) {
+        // Required empty public constructor
+        this.config = config;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_quiz);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment_quiz, container, false);
         setControls();
         getAllCards();
         setEvents();
+        return mView;
     }
-
-    @Override
-    protected void onDestroy() {
-        if(mTTSJapanese != null){
-            mTTSJapanese.stop();
-            mTTSJapanese.shutdown();
-        }
-        super.onDestroy();
-    }
-
-    private void setControls() {
-        btnOption1 = findViewById(R.id.btn_option1);
-        btnOption2 = findViewById(R.id.btn_option2);
-        btnOption3 = findViewById(R.id.btn_option3);
-        btnOption4 = findViewById(R.id.btn_option4);
-        bgOption1 = findViewById(R.id.background_option1);
-        bgOption2 = findViewById(R.id.background_option2);
-        bgOption3 = findViewById(R.id.background_option3);
-        bgOption4 = findViewById(R.id.background_option4);
-        tvQuesIndex = findViewById(R.id.tv_question_index);
-        tvQuestion = findViewById(R.id.tv_question);
-        tvPronunciation = findViewById(R.id.tv_howtoread_quiz);
-        tvExamples = findViewById(R.id.tv_examples_quiz);
-        easyFlipView = findViewById(R.id.efv_question);
-        mListCards = new ArrayList<>();
-        mListOptions = new ArrayList<>();
-        mListQuestions = new ArrayList<>();
-        mListResultItems = new ArrayList<>();
-        mListIncorrectQuestions = new ArrayList<>();
-        tvPressToFlip = findViewById(R.id.tv_press_to_flip);
-        btnSpeaker = findViewById(R.id.btn_speaker);
-        mTTSJapanese = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if(i != TextToSpeech.ERROR){
-                    mTTSJapanese.setLanguage(Locale.JAPAN);
-                }
-            }
-        });
-
-
-        Intent intent = getIntent();
-        String set_ref_url= intent.getStringExtra("SET_REF_URL");
-        boolean reverse = intent.getBooleanExtra("IS_REVERSED", false);
-        boolean shuffle = intent.getBooleanExtra("IS_SHUFFLE", false);
-        isReversed = reverse;
-        isShuffleQues = shuffle;
-        flashCardRoot = FirebaseDatabase.getInstance().getReferenceFromUrl(set_ref_url).child("flashCards");
-
-    }
-
-    int selectedOption = -1;
-
     private void setEvents() {
         btnOption1.setOnClickListener(view -> {
             selectedOption = 0;
@@ -158,11 +116,56 @@ public class QuizActivity extends AppCompatActivity {
         btnSpeaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(">>>>>>>>>>>>>", "ahahahah");
                 String text = currentQues.getQuestion();
                 mTTSJapanese.speak(text, TextToSpeech.QUEUE_FLUSH, null,  ""  );
             }
         });
+    }
+    private void setControls() {
+        btnOption1 = mView.findViewById(R.id.btn_option1);
+        btnOption2 = mView.findViewById(R.id.btn_option2);
+        btnOption3 = mView.findViewById(R.id.btn_option3);
+        btnOption4 = mView.findViewById(R.id.btn_option4);
+        bgOption1 = mView.findViewById(R.id.background_option1);
+        bgOption2 = mView.findViewById(R.id.background_option2);
+        bgOption3 = mView.findViewById(R.id.background_option3);
+        bgOption4 = mView.findViewById(R.id.background_option4);
+        tvQuesIndex = mView.findViewById(R.id.tv_question_index);
+        tvQuestion = mView.findViewById(R.id.tv_question);
+        tvPronunciation = mView.findViewById(R.id.tv_howtoread_quiz);
+        tvExamples = mView.findViewById(R.id.tv_examples_quiz);
+        easyFlipView = mView.findViewById(R.id.efv_question);
+        mListCards = new ArrayList<>();
+        mListOptions = new ArrayList<>();
+        mListQuestions = new ArrayList<>();
+        mListResultItems = new ArrayList<>();
+        mListIncorrectQuestions = new ArrayList<>();
+        tvPressToFlip = mView.findViewById(R.id.tv_press_to_flip);
+        btnSpeaker = mView.findViewById(R.id.btn_speaker);
+        mTTSJapanese = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                if(i != TextToSpeech.ERROR){
+                    mTTSJapanese.setLanguage(Locale.JAPAN);
+                }
+            }
+        });
+
+
+        setsReference = config.get("SET_REF_URL");
+        isReversed = Boolean.parseBoolean(config.get("IS_REVERSED"));
+        isShuffleQues = Boolean.parseBoolean(config.get("IS_SHUFFLE"));
+        flashCardRoot = FirebaseDatabase.getInstance().getReferenceFromUrl(setsReference.toString()).child("flashCards");
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mTTSJapanese != null){
+            mTTSJapanese.stop();
+            mTTSJapanese.shutdown();
+        }
+        super.onDestroy();
     }
 
     private void checkAnswer(int selectedOption) {
@@ -171,28 +174,28 @@ public class QuizActivity extends AppCompatActivity {
             //correct
             if (selectedOption == 0) {
                 btnOption1.setBackgroundColor(getResources().getColor(R.color.correct));
-                btnOption1.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
+                btnOption1.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onCorrect));
                 btnOption2.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 1) {
                 btnOption2.setBackgroundColor(getResources().getColor(R.color.correct));
-                btnOption2.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
+                btnOption2.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 2) {
                 btnOption3.setBackgroundColor(getResources().getColor(R.color.correct));
-                btnOption3.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onCorrect));
+                btnOption3.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption2.setEnabled(false);
                 btnOption4.setEnabled(false);
             }
             if (selectedOption == 3) {
                 btnOption4.setBackgroundColor(getResources().getColor(R.color.correct));
-                btnOption4.setTextColor(ContextCompat.getColorStateList(QuizActivity.this, R.color.onCorrect));
+                btnOption4.setTextColor(ContextCompat.getColorStateList(getContext(), R.color.onCorrect));
                 btnOption1.setEnabled(false);
                 btnOption3.setEnabled(false);
                 btnOption2.setEnabled(false);
@@ -214,24 +217,23 @@ public class QuizActivity extends AppCompatActivity {
             }
             if (selectedOption == 0) {
                 btnOption1.setBackgroundColor(getResources().getColor(R.color.incorrect));
-                btnOption1.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
+                btnOption1.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onIncorrect));
             }
             if (selectedOption == 1) {
                 btnOption2.setBackgroundColor(getResources().getColor(R.color.incorrect));
-                btnOption2.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
+                btnOption2.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onIncorrect));
             }
             if (selectedOption == 2) {
                 btnOption3.setBackgroundColor(getResources().getColor(R.color.incorrect));
-                btnOption3.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
+                btnOption3.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onIncorrect));
             }
             if (selectedOption == 3) {
                 btnOption4.setBackgroundColor(getResources().getColor(R.color.incorrect));
-                btnOption4.setTextColor(ContextCompat.getColorStateList(QuizActivity.this,R.color.onIncorrect));
+                btnOption4.setTextColor(ContextCompat.getColorStateList(getContext(),R.color.onIncorrect));
             }
 
         }
     }
-
     private void changeQuestion() {
         isFirstChoiceCorrect = true;
         btnOption1.setBackgroundColor(0x00000000);
@@ -250,9 +252,8 @@ public class QuizActivity extends AppCompatActivity {
             questNum++;
             setQuestion(questNum);
         } else {
-            //end quizz
-
-            Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+            //end quiz
+            Dialog dialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.dialog_result_quiz);
 
@@ -267,12 +268,13 @@ public class QuizActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
-                    Intent intent = new Intent(QuizActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    if(getActivity().getSupportFragmentManager() != null){
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
                 }
             });
             btnViewResult.setOnClickListener(view -> {
-                final Dialog resultsDialog = new Dialog(QuizActivity.this);
+                final Dialog resultsDialog = new Dialog(getContext());
                 resultsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 resultsDialog.setContentView(R.layout.dialog_results);
                 Window window = resultsDialog.getWindow();
@@ -288,7 +290,7 @@ public class QuizActivity extends AppCompatActivity {
 
                 Button btnBack = resultsDialog.findViewById(R.id.btn_back_result_dialog);
                 RecyclerView rcvResults = resultsDialog.findViewById(R.id.rcv_results_dialog);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(QuizActivity.this);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                 rcvResults.setLayoutManager(linearLayoutManager);
                 SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10, true, false);
                 rcvResults.addItemDecoration(itemDecorator);
@@ -302,7 +304,6 @@ public class QuizActivity extends AppCompatActivity {
             dialog.show();
         }
     }
-
     private void getAllCards() {
         flashCardRoot.addValueEventListener(new ValueEventListener() {
             @Override
@@ -337,7 +338,6 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
     }
-
     private void setQuestion(int i) {
         tvQuestion.setText(mListQuestions.get(i).getQuestion());
         btnOption1.setText(mListQuestions.get(i).getOption1());
@@ -349,7 +349,6 @@ public class QuizActivity extends AppCompatActivity {
         tvExamples.setText(mListQuestions.get(i).getExamples());
         currentQues = mListQuestions.get(i); // get current question
     }
-
     private ArrayList<Question> getQuestionListForQuiz(boolean reversed) {
         if (mListCards.size() == 0) return null;
         ArrayList<Question> listQues = new ArrayList<>();
@@ -370,7 +369,6 @@ public class QuizActivity extends AppCompatActivity {
         }
         return listQues;
     }
-
     private Question makeOneQuestion(String ques, String ans, String read, String ex, ArrayList<String> allOptions) {
         Question resQuestion = new Question();
         resQuestion.setQuestion(ques); // question
@@ -413,7 +411,6 @@ public class QuizActivity extends AppCompatActivity {
 
         return resQuestion;
     }
-
     private ArrayList<Integer> getAnotherOptions(String answer, ArrayList<String> allOptions) {
         ArrayList<Integer> numbers = new ArrayList<Integer>();
         Random randomGenerator = new Random();
@@ -431,4 +428,8 @@ public class QuizActivity extends AppCompatActivity {
         mListResultItems.add(resultItem);
     }
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

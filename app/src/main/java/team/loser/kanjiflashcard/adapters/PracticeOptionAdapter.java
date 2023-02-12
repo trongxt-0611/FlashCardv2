@@ -42,7 +42,7 @@ public class PracticeOptionAdapter extends RecyclerView.Adapter<PracticeOptionAd
     private List<PracticeOption> mListOptions;
     private ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
     private IClickListener mIClickListener;
-    private int row_index = -1;
+    private int row_index = 0;
     int primary_color, surface_color, on_surface_color, on_primary_color;
 
     public interface IClickListener {

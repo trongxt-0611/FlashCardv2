@@ -1,23 +1,16 @@
 package team.loser.kanjiflashcard.fragments;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -26,17 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -50,17 +38,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import team.loser.kanjiflashcard.MainActivity;
-import team.loser.kanjiflashcard.QuizActivity;
 import team.loser.kanjiflashcard.R;
 import team.loser.kanjiflashcard.adapters.CardAdapter;
 import team.loser.kanjiflashcard.adapters.PracticeOptionAdapter;
 import team.loser.kanjiflashcard.models.Card;
 import team.loser.kanjiflashcard.models.PracticeOption;
-import team.loser.kanjiflashcard.models.Set;
 import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 
 public class CardsFragment extends Fragment {
@@ -475,13 +462,16 @@ public class CardsFragment extends Fragment {
             public void onClick(View view) {
                 switch (mPracticeOption){
                     case 0:
-                        startActivity(setUpIntentPractice(setRef.toString(), false, false));
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), false, false));
                         break;
                     case 1:
-                        startActivity(setUpIntentPractice(setRef.toString(), false, true));
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), false, true));
                         break;
                     case 2:
-                        startActivity(setUpIntentPractice(setRef.toString(), true, true));
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), true, true));
                       break;
                     default:
                         break;
@@ -490,12 +480,12 @@ public class CardsFragment extends Fragment {
         });
 
     }
-    private Intent setUpIntentPractice(String setRefUrl, boolean isReversed, boolean isShuffle){
-        Intent intent = new Intent(getContext(), QuizActivity.class);
-        intent.putExtra("SET_REF_URL", setRefUrl);
-        intent.putExtra("IS_REVERSED", isReversed);
-        intent.putExtra("IS_SHUFFLE", isShuffle);
-        return intent;
+    private HashMap<String, String> setConfigForQuiz(String setRefUrl, boolean isReversed, boolean isShuffle){
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("SET_REF_URL", setRefUrl);
+        map.put("IS_REVERSED", String.valueOf(isReversed));
+        map.put("IS_SHUFFLE", String.valueOf(isShuffle));
+        return map;
     }
     private void closeKeyboard()
     {
