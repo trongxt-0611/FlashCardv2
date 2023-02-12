@@ -4,12 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,14 +41,12 @@ import java.util.List;
 import java.util.Map;
 
 import team.loser.kanjiflashcard.MainActivity;
-import team.loser.kanjiflashcard.QuizActivity;
 import team.loser.kanjiflashcard.R;
 import team.loser.kanjiflashcard.adapters.PracticeOptionAdapter;
 import team.loser.kanjiflashcard.adapters.SetAdapter;
 import team.loser.kanjiflashcard.models.Category;
 import team.loser.kanjiflashcard.models.PracticeOption;
 import team.loser.kanjiflashcard.models.Set;
-import team.loser.kanjiflashcard.utils.IOnBackPressed;
 import team.loser.kanjiflashcard.utils.SpacingItemDecorator;
 
 public class SetsFragment extends Fragment {
@@ -72,7 +65,7 @@ public class SetsFragment extends Fragment {
     private ProgressDialog loader;
     private PracticeOptionAdapter mPracticeOptionAdapter;
     private ArrayList<PracticeOption> mListPracticeOptions;
-    private int mPracticeOption;
+    private int mPracticeOption = 0;
 
     public SetsFragment(DatabaseReference cateRef ) {
         this.cateRef = cateRef;
@@ -126,11 +119,7 @@ public class SetsFragment extends Fragment {
             }
             @Override
             public void onClickStartReview(DatabaseReference setRef) {
-                Intent intent = new Intent(getContext(), QuizActivity.class);
-                intent.putExtra("SET_REF_URL", setRef.toString());
-                intent.putExtra("IS_REVERSED", false);
-                intent.putExtra("IS_SHUFFLE", false);
-                startActivity(intent);
+                ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), false, false));
             }
             @Override
             public void onClickStartPractice(DatabaseReference setRef) {
@@ -174,10 +163,12 @@ public class SetsFragment extends Fragment {
             public void onClick(View view) {
                 switch (mPracticeOption){
                     case 0:
-                        startActivity(setUpIntentPractice(setRef.toString(), false, true));
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), false, true));
                         break;
                     case 1:
-                        startActivity(setUpIntentPractice(setRef.toString(), true, true));
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), true, true));
                         break;
                     default:
                         break;
@@ -193,12 +184,12 @@ public class SetsFragment extends Fragment {
         this.mListPracticeOptions.add(option2);
         this.mListPracticeOptions.add(option3);
     }
-    private Intent setUpIntentPractice(String setRefUrl, boolean isReversed, boolean isShuffle){
-        Intent intent = new Intent(getContext(), QuizActivity.class);
-        intent.putExtra("SET_REF_URL", setRefUrl);
-        intent.putExtra("IS_REVERSED", isReversed);
-        intent.putExtra("IS_SHUFFLE", isShuffle);
-        return intent;
+    private HashMap<String, String> setConfigForQuiz(String setRefUrl, boolean isReversed, boolean isShuffle){
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("SET_REF_URL", setRefUrl);
+        map.put("IS_REVERSED", String.valueOf(isReversed));
+        map.put("IS_SHUFFLE", String.valueOf(isShuffle));
+        return map;
     }
     private void getNumberOfSet() {
         setsRef.addValueEventListener(new ValueEventListener() {

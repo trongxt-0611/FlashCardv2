@@ -45,11 +45,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import team.loser.kanjiflashcard.fragments.CardsFragment;
 import team.loser.kanjiflashcard.fragments.ChangePasswordFragment;
 import team.loser.kanjiflashcard.fragments.HomeFragment;
 import team.loser.kanjiflashcard.fragments.ProfileFragment;
+import team.loser.kanjiflashcard.fragments.QuizFragment;
 import team.loser.kanjiflashcard.fragments.SetsFragment;
 import team.loser.kanjiflashcard.utils.IOnBackPressed;
 
@@ -252,6 +254,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SetsFragment setsFragment = new SetsFragment(cateRef);
         fragmentTransaction.addToBackStack(setsFragment.SETS_FRAGMENT_NAME);
         fragmentTransaction.replace(R.id.content_frame, setsFragment);
+        fragmentTransaction.commit();
+    }
+    public void goToQuizFragment(HashMap<String, String> config){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        QuizFragment quizFragment = new QuizFragment(config);
+        fragmentTransaction.addToBackStack(quizFragment.QUIZ_FRAGMENT_NAME);
+        fragmentTransaction.replace(R.id.content_frame, quizFragment);
         fragmentTransaction.commit();
     }
     @Override
