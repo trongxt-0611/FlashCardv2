@@ -157,9 +157,12 @@ public class CardsFragment extends Fragment {
         PracticeOption option1 = new PracticeOption("0", getString(R.string.quiz_review_title),getString(R.string.quiz_review_des));
         PracticeOption option2 = new PracticeOption("1", getString(R.string.quiz_practice_title), getString(R.string.quiz_practice_des));
         PracticeOption option3 = new PracticeOption("2", getString(R.string.quiz_practice_reversed_title),getString(R.string.quiz_practice_reversed_des));
+        PracticeOption option4 = new PracticeOption("3", getString(R.string.quiz_match_card_title),getString(R.string.quiz_match_card_des));
         this.mListPracticeOptions.add(option1);
         this.mListPracticeOptions.add(option2);
         this.mListPracticeOptions.add(option3);
+        this.mListPracticeOptions.add(option4);
+
     }
     private void getNumberOfCards() {
         flashcardsReference.addValueEventListener(new ValueEventListener() {
@@ -473,6 +476,9 @@ public class CardsFragment extends Fragment {
                         optionsDialog.dismiss();
                         ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), true, true));
                       break;
+                    case 3:
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizMatchCardsFragment(setRef);
                     default:
                         break;
                 }

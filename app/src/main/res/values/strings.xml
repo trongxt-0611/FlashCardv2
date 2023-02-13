@@ -37,4 +37,7 @@
 
     <string name="quiz_practice_reversed_title">Reversed Practice</string>
     <string name="quiz_practice_reversed_des">Word definition is the question</string>
+
+    <string name="quiz_match_card_title">Match Cards</string>
+    <string name="quiz_match_card_des">Match between two lists</string>
 </resources>

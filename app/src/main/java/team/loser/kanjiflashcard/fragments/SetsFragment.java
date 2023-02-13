@@ -170,6 +170,9 @@ public class SetsFragment extends Fragment {
                         optionsDialog.dismiss();
                         ((MainActivity)getActivity()).goToQuizFragment(setConfigForQuiz(setRef.toString(), true, true));
                         break;
+                    case 2:
+                        optionsDialog.dismiss();
+                        ((MainActivity)getActivity()).goToQuizMatchCardsFragment(setRef);
                     default:
                         break;
                 }
@@ -181,8 +184,10 @@ public class SetsFragment extends Fragment {
         mListPracticeOptions = new ArrayList<PracticeOption>();
         PracticeOption option2 = new PracticeOption("1", getString(R.string.quiz_practice_title), getString(R.string.quiz_practice_des));
         PracticeOption option3 = new PracticeOption("2", getString(R.string.quiz_practice_reversed_title),getString(R.string.quiz_practice_reversed_des));
+        PracticeOption option4 = new PracticeOption("3", getString(R.string.quiz_match_card_title),getString(R.string.quiz_match_card_des));
         this.mListPracticeOptions.add(option2);
         this.mListPracticeOptions.add(option3);
+        this.mListPracticeOptions.add(option4);
     }
     private HashMap<String, String> setConfigForQuiz(String setRefUrl, boolean isReversed, boolean isShuffle){
         HashMap<String, String> map = new HashMap<String, String>();
@@ -389,7 +394,7 @@ public class SetsFragment extends Fragment {
                 loader.setMessage("Updating...");
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
-                cateRef.child(set.getId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                cateRef.child("sets").child(set.getId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){

@@ -52,6 +52,7 @@ import team.loser.kanjiflashcard.fragments.ChangePasswordFragment;
 import team.loser.kanjiflashcard.fragments.HomeFragment;
 import team.loser.kanjiflashcard.fragments.ProfileFragment;
 import team.loser.kanjiflashcard.fragments.QuizFragment;
+import team.loser.kanjiflashcard.fragments.QuizMatchCardFragment;
 import team.loser.kanjiflashcard.fragments.SetsFragment;
 import team.loser.kanjiflashcard.utils.IOnBackPressed;
 
@@ -261,6 +262,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         QuizFragment quizFragment = new QuizFragment(config);
         fragmentTransaction.addToBackStack(quizFragment.QUIZ_FRAGMENT_NAME);
         fragmentTransaction.replace(R.id.content_frame, quizFragment);
+        fragmentTransaction.commit();
+    }
+    public void goToQuizMatchCardsFragment(DatabaseReference setRef){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        QuizMatchCardFragment quizMatchCardFragment = new QuizMatchCardFragment(setRef);
+        fragmentTransaction.addToBackStack(quizMatchCardFragment.QUIZ_MATCH_CARD_FRAGMENT_NAME);
+        fragmentTransaction.replace(R.id.content_frame, quizMatchCardFragment);
         fragmentTransaction.commit();
     }
     @Override
