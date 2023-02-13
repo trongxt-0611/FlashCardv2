@@ -92,8 +92,8 @@ public class QuizFragment extends Fragment implements IOnBackPressed {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_quiz, container, false);
         setControls();
-        getAllCards();
         setEvents();
+        getAllCards();
         return mView;
     }
     private void setEvents() {
